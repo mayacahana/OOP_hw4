@@ -72,7 +72,7 @@ public:
                                                         game_board[row][col]->getPieceBoard());
     }
 
-    class Iterator {
+    class BaseIterator {
         GameBoard *m_game_board;
         int *m_num_player;
         GAME_PIECE *m_piece;
@@ -80,13 +80,13 @@ public:
 
     public:
         // first ctor - gameboard, player, gamepiece, x=-1, y=COLS-1
-        Iterator(GameBoard *game_board, int *num_player, GAME_PIECE *piece) :
+        BaseIterator(GameBoard *game_board, int *num_player, GAME_PIECE *piece) :
                 m_game_board(game_board), m_num_player(num_player), m_piece(piece), m_x(-1), m_y(COLS - 1) {
             ++(*this);
         }
 
         // second ctor - gameboard, player, gamepiece, x, y
-        Iterator(GameBoard *game_board, int *num_player, GAME_PIECE *piece, int x, int y) :
+        BaseIterator(GameBoard *game_board, int *num_player, GAME_PIECE *piece, int x, int y) :
                 m_game_board(game_board), m_num_player(num_player), m_piece(piece), m_x(x), m_y(y) {
 
         }
@@ -103,12 +103,12 @@ public:
         }
         //operator !=
 
-        bool operator!=(const Iterator &other) {
+        bool operator!=(const BaseIterator &other) {
             return (this->m_x != other.m_x || this->m_y != other.m_y);
         }
 
         // operator ++
-        Iterator &operator++() {
+        BaseIterator &operator++() {
             // if possible, iterate over y
             m_y = (m_y + 1) % COLS;
             if (m_y == 0)
@@ -116,10 +116,10 @@ public:
             if (m_x >= ROWS)
                 return *this;
             if (m_game_board->game_board[m_x][m_y] != nullptr) {
-                bool player_check = m_game_board->game_board[m_x][m_y]->getNumPlayer() == *m_num_player;
-                if ((m_num_player != nullptr && player_check) || (m_num_player == nullptr)) {
-                    bool piece_check = m_game_board->game_board[m_x][m_y]->getPieceBoard() == *m_piece;
-                    if ((m_piece != nullptr && piece_check) || (m_piece == nullptr))
+                bool player_check = m_num_player != nullptr && m_game_board->game_board[m_x][m_y]->getNumPlayer() == *m_num_player;
+                if ((player_check) || (m_num_player == nullptr)) {
+                    bool piece_check = m_piece != nullptr && m_game_board->game_board[m_x][m_y]->getPieceBoard() == *m_piece;
+                    if ((piece_check) || (m_piece == nullptr))
                         return *this;
                 }
             }
@@ -130,43 +130,43 @@ public:
                 if (m_x >= ROWS)
                     break;
                 if (m_game_board->game_board[m_x][m_y] != nullptr) {
-                    bool player_check = m_game_board->game_board[m_x][m_y]->getNumPlayer() == *m_num_player;
-                    if ((m_num_player != nullptr && player_check) || (m_num_player == nullptr)) {
-                        bool piece_check = m_game_board->game_board[m_x][m_y]->getPieceBoard() == *m_piece;
-                        if ((m_piece != nullptr && piece_check) || (m_piece == nullptr))
-                            break;
+                    bool player_check = m_num_player != nullptr && m_game_board->game_board[m_x][m_y]->getNumPlayer() == *m_num_player;
+                    if ((player_check) || (m_num_player == nullptr)) {
+                        bool piece_check = m_piece != nullptr && m_game_board->game_board[m_x][m_y]->getPieceBoard() == *m_piece;
+                        if ((piece_check) || (m_piece == nullptr))
+                            return *this;
                     }
                 }
             }
             return *this;
         }
-
-        // begin & end
-        Iterator begin() { return Iterator(this, nullptr, nullptr); }
-
-        Iterator end() { return Iterator(this, nullptr, nullptr, ROWS, 0); }
-
-        class MyIterator {
-            GameBoard *m_game_board;
-            int *m_num_player;
-            GAME_PIECE *m_piece;
-        public:
-            MyIterator(GameBoard *game_board, int *num_player, GAME_PIECE *piece) :
-                    m_game_board(game_board), m_num_player(num_player), m_piece(piece) {}
-
-            Iterator begin() { return Iterator(m_game_board, m_num_player, m_piece); }
-
-            Iterator end() { return Iterator(m_game_board, m_num_player, m_piece, ROWS, 0); }
-        };
-
-        MyIterator allPiecesOfPlayer(int num_player) { return MyIterator(this, new int(num_player), nullptr); }
-
-        MyIterator allOccureneceOfPiece(GAME_PIECE piece) { return MyIterator(this, nullptr, new GAME_PIECE(piece)); }
-
-        MyIterator allOccureneceOfPieceForPlayer(GAME_PIECE piece, int num_player) { return MyIterator(this, new int(num_player), new GAME_PIECE(piece)); }
-
-
     };
+
+    class MyIterator {
+        GameBoard *m_game_board;
+        int *m_num_player;
+        GAME_PIECE *m_piece;
+    public:
+        MyIterator(GameBoard *game_board, int *num_player, GAME_PIECE *piece) :
+                m_game_board(game_board), m_num_player(num_player), m_piece(piece) {}
+
+        BaseIterator begin() { return BaseIterator(m_game_board, m_num_player, m_piece); }
+
+        BaseIterator end() { return BaseIterator(m_game_board, m_num_player, m_piece, ROWS, 0); }
+    };
+
+
+    // begin & end
+    BaseIterator begin() { return BaseIterator(this, nullptr, nullptr); }
+
+    BaseIterator end() { return BaseIterator(this, nullptr, nullptr, ROWS, 0); }
+
+    MyIterator allPiecesOfPlayer(int num_player) { return MyIterator(this, new int(num_player), nullptr); }
+
+    MyIterator allOccureneceOfPiece(GAME_PIECE piece) { return MyIterator(this, nullptr, new GAME_PIECE(piece)); }
+
+    MyIterator allOccureneceOfPieceForPlayer(GAME_PIECE piece, int num_player) { return MyIterator(this, new int(num_player), new GAME_PIECE(piece)); }
+
 
 };
 
