@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/mayacahana/Documents/GitHub/OOP_hw4/GameBoard.h
+initializer_list
+-
+iostream
+-
+utility
+-
+memory
+-
+tuple
+-
+
+/Users/mayacahana/Documents/GitHub/OOP_hw4/main.cpp
+string
+-
+GameBoard.h
+/Users/mayacahana/Documents/GitHub/OOP_hw4/GameBoard.h
+unit_test_util.h
+/Users/mayacahana/Documents/GitHub/OOP_hw4/unit_test_util.h
+
+/Users/mayacahana/Documents/GitHub/OOP_hw4/unit_test_util.h
+iostream
+-
+
